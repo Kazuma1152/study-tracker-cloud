@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Tracker Cloud</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <section id="configWarning" class="panel warning-banner hidden">
+      <h2>Supabase setup needed</h2>
+      <p>
+        Add your Supabase project URL and anon key in <code>config.js</code> before using the app.
+      </p>
+    </section>
+
+    <section id="authView" class="auth-layout hidden">
+      <div class="auth-intro panel">
+        <p class="eyebrow">Study Tracker Cloud</p>
+        <h1>Sign in from anywhere and keep every study session with your account.</h1>
+        <p class="hero-text">
+          This version uses Supabase for authentication and cloud storage, so your account and study data follow you across devices.
+        </p>
+        <div class="feature-list">
+          <article class="mini-card">
+            <strong>Daily and weekly summaries</strong>
+            <span>Track total hours and momentum by date.</span>
+          </article>
+          <article class="mini-card">
+            <strong>Subject-wise progress</strong>
+            <span>See where your time is going each week.</span>
+          </article>
+          <article class="mini-card">
+            <strong>Cloud account</strong>
+            <span>Your entries are stored in Supabase instead of a local file.</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel auth-panel">
+        <div class="tabs">
+          <button id="loginTab" class="tab-btn active" type="button">Login</button>
+          <button id="registerTab" class="tab-btn" type="button">Create Account</button>
+        </div>
+
+        <p id="authMessage" class="status-text"></p>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            Email
+            <input type="email" id="loginEmail" placeholder="you@example.com" required>
+          </label>
+          <label>
+            Password
+            <input type="password" id="loginPassword" placeholder="Your password" required>
+          </label>
+          <button class="primary-btn" type="submit">Login</button>
+        </form>
+
+        <form id="registerForm" class="auth-form hidden">
+          <label>
+            Name
+            <input type="text" id="registerName" placeholder="Your name" required>
+          </label>
+          <label>
+            Email
+            <input type="email" id="registerEmail" placeholder="you@example.com" required>
+          </label>
+          <label>
+            Password
+            <input type="password" id="registerPassword" placeholder="Choose a strong password" minlength="8" required>
+          </label>
+          <button class="primary-btn" type="submit">Create Account</button>
+        </form>
+      </div>
+    </section>
+
+    <div id="appView" class="hidden">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Daily + Weekly Planner</p>
+          <h1>Track your study progress by subject and by date.</h1>
+          <p class="hero-text">
+            Add each study session once, then watch your daily totals, weekly momentum, and subject-wise effort build automatically.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <article class="stat-card accent account-card">
+            <span>Signed in as</span>
+            <strong id="accountName">Student</strong>
+            <div class="account-actions">
+              <small id="accountEmail">student@example.com</small>
+              <button id="logoutButton" class="outline-btn" type="button">Logout</button>
+            </div>
+          </article>
+          <article class="stat-card">
+            <span>Today</span>
+            <strong id="todayHours">0 hrs</strong>
+            <small id="todaySessions">0 sessions logged</small>
+          </article>
+          <article class="stat-card">
+            <span>This Week</span>
+            <strong id="weekHours">0 hrs</strong>
+            <small id="weekSessions">0 sessions logged</small>
+          </article>
+        </div>
+      </header>
+
+      <p id="appMessage" class="status-text"></p>
+
+      <main class="dashboard">
+        <section class="panel form-panel">
+          <div class="panel-head">
+            <div>
+              <h2 id="formTitle">Add Study Entry</h2>
+              <p id="formSubtitle">Log what you studied today or backfill previous dates.</p>
+            </div>
+            <button type="button" id="cancelEdit" class="ghost-btn hidden">Cancel Edit</button>
+          </div>
+
+          <form id="studyForm" class="study-form">
+            <label>
+              Date
+              <input type="date" id="studyDate" required>
+            </label>
+
+            <label>
+              Subject
+              <input type="text" id="subject" list="subjectSuggestions" placeholder="Math, Science, History..." required>
+            </label>
+            <datalist id="subjectSuggestions"></datalist>
+
+            <label>
+              Study Hours
+              <input type="number" id="hours" min="0.25" step="0.25" placeholder="1.5" required>
+            </label>
+
+            <label>
+              Topic / Notes
+              <textarea id="notes" rows="4" placeholder="What did you cover today?"></textarea>
+            </label>
+
+            <button type="submit" id="submitButton" class="primary-btn">Save Entry</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Subject Progress</h2>
+            <p>Weekly totals for each subject.</p>
+          </div>
+          <div id="subjectSummary" class="subject-summary empty-state">
+            No subjects logged yet.
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Study Trend</h2>
+              <p>Daily study hours for the last 7 logged dates.</p>
+            </div>
+            <button type="button" id="exportCsv" class="ghost-btn">Export CSV</button>
+          </div>
+          <div id="chartCard" class="chart-card empty-state">
+            Add a few entries to see your study trend.
+          </div>
+        </section>
+
+        <section class="panel wide-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Date-wise History</h2>
+              <p>Review all sessions and filter them by date or subject.</p>
+            </div>
+            <div class="toolbar">
+              <input type="date" id="filterDate" aria-label="Filter by date">
+              <input type="text" id="filterSubject" placeholder="Filter by subject" aria-label="Filter by subject">
+              <button type="button" id="clearFilters" class="ghost-btn">Clear</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Hours</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="historyTable">
+                <tr>
+                  <td colspan="5" class="empty-row">No study entries yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel wide-panel">
+          <div class="panel-head">
+            <h2>Weekly Snapshot</h2>
+            <p>Your study hours across the current week.</p>
+          </div>
+          <div id="weeklyGrid" class="weekly-grid"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
