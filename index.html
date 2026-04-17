@@ -171,6 +171,51 @@
         <section class="panel wide-panel">
           <div class="panel-head">
             <div>
+              <h2>Monthly Analytics</h2>
+              <p>Review totals, subject focus, and daily momentum for a selected month.</p>
+            </div>
+            <div class="toolbar">
+              <input type="month" id="monthFilter" aria-label="Filter by month">
+            </div>
+          </div>
+
+          <div class="monthly-grid">
+            <article class="monthly-stat">
+              <span>Total Hours</span>
+              <strong id="monthTotalHours">0 hrs</strong>
+              <small id="monthTotalSessions">0 sessions</small>
+            </article>
+            <article class="monthly-stat">
+              <span>Study Days</span>
+              <strong id="monthStudyDays">0</strong>
+              <small id="monthDailyAverage">0 hrs/day average</small>
+            </article>
+            <article class="monthly-stat">
+              <span>Top Subject</span>
+              <strong id="monthTopSubject">-</strong>
+              <small id="monthTopSubjectHours">0 hrs logged</small>
+            </article>
+          </div>
+
+          <div class="monthly-panels">
+            <div class="monthly-box">
+              <h3>Subject Breakdown</h3>
+              <div id="monthlySubjectSummary" class="subject-summary empty-state">
+                No monthly data yet.
+              </div>
+            </div>
+            <div class="monthly-box">
+              <h3>Daily Breakdown</h3>
+              <div id="monthlyDailySummary" class="daily-summary empty-state">
+                No monthly data yet.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel wide-panel">
+          <div class="panel-head">
+            <div>
               <h2>Date-wise History</h2>
               <p>Review all sessions and filter them by date or subject.</p>
             </div>
